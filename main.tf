@@ -185,7 +185,7 @@ module "acm" {
   source  = "terraform-aws-modules/acm/aws"
   version = "~> 4.0"
 
-  domain_name       = "tommyce6.sctp-sandbox.com"
+  domain_name       = "${local.name_prefix}.sctp-sandbox.com"
   zone_id           = data.aws_route53_zone.zone.zone_id
   validation_method = "DNS"
 }
@@ -194,7 +194,7 @@ module "acm" {
 
 # Define the API Gateway Domain Name
 resource "aws_apigatewayv2_domain_name" "http_api" {
-  domain_name = "tommyce6.sctp-sandbox.com"
+  domain_name = "${local.name_prefix}.sctp-sandbox.com"
 
   domain_name_configuration {
     certificate_arn = module.acm.acm_certificate_arn  # Ensure this matches the output name
@@ -215,37 +215,24 @@ resource "aws_apigatewayv2_api_mapping" "example" {
 # Route53 DNS Record
 resource "aws_route53_record" "http_api" {
   zone_id = data.aws_route53_zone.zone.zone_id
-  name     = "api.${local.name_prefix}.sctp-sandbox.com"
+  name     = aws_apigatewayv2_domain_name.http_api.domain_name
+ # name     = "tommyce6.sctp-sandbox.com"
   type     = "A"
 
   alias {
-    name                   = aws_apigatewayv2_domain_name.http_api.domain_name
-    zone_id                = aws_apigatewayv2_domain_name.http_api.id
-    evaluate_target_health = true
+    name                   = aws_apigatewayv2_domain_name.http_api.domain_name_configuration[0].target_domain_name
+    zone_id                = aws_apigatewayv2_domain_name.http_api.domain_name_configuration[0].hosted_zone_id
+    evaluate_target_health = false
   }
 }
 
 
-resource "aws_apigatewayv2_domain_name" "http-api" {
-  domain_name = "tommyce6.sctp-sandbox.com"
+# resource "aws_apigatewayv2_domain_name" "http-api" {
+#   domain_name = "tommyce6.sctp-sandbox.com"
 
-  domain_name_configuration {
-    certificate_arn = module.acm.acm_certificate_arn  # Ensure this matches the output name
-    endpoint_type   = "REGIONAL"
-    security_policy = "TLS_1_2"
-  }
-}
-
-resource "aws_route53_record" "http-api" {
-  zone_id = data.aws_route53_zone.zone.zone_id
-  name     = "api.${local.name_prefix}.sctp-sandbox.com"
-  type     = "A"
-
-  alias {
-    name                   = aws_apigatewayv2_domain_name.http_api.domain_name
-    zone_id                = aws_apigatewayv2_domain_name.http_api.id
-    evaluate_target_health = true
-  }
-}
-
-
+#   domain_name_configuration {
+#     certificate_arn = module.acm.acm_certificate_arn  # Ensure this matches the output name
+#     endpoint_type   = "REGIONAL"
+#     security_policy = "TLS_1_2"
+#   }
+# }
