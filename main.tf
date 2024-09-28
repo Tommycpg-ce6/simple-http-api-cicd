@@ -194,7 +194,7 @@ module "acm" {
 
 # Define the API Gateway Domain Name
 resource "aws_apigatewayv2_domain_name" "http_api" {
-  domain_name = "api.${local.name_prefix}.sctp-sandbox.com"
+  domain_name = "tommyce6.sctp-sandbox.com"
 
   domain_name_configuration {
     certificate_arn = module.acm.acm_certificate_arn  # Ensure this matches the output name
@@ -226,7 +226,7 @@ resource "aws_route53_record" "http_api" {
 }
 
 resource "aws_apigatewayv2_domain_name" "http-api" {
-  domain_name = "api.${local.name_prefix}.sctp-sandbox.com"
+  domain_name = "tommyce6.sctp-sandbox.com"
 
   domain_name_configuration {
     certificate_arn = module.acm.acm_certificate_arn  # Ensure this matches the output name
