@@ -225,6 +225,7 @@ resource "aws_route53_record" "http_api" {
   }
 }
 
+
 resource "aws_apigatewayv2_domain_name" "http-api" {
   domain_name = "tommyce6.sctp-sandbox.com"
 
@@ -246,3 +247,5 @@ resource "aws_route53_record" "http-api" {
     evaluate_target_health = true
   }
 }
+
+
